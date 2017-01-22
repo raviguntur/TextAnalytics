@@ -6,7 +6,7 @@ package com.darkknight.analytics.textsummary.textmodel
 object Main {
 
   def main(args: Array[String]): Unit = {
-    val stories = new CSVFileReader("/Users/apple/PROJECTS/TextProcessing/articles.csv")
+    val stories = new CSVFileReader(args(0))
     //each story --> break into sentences --> phrases
 
     //this is a list of stories from the csv file
