@@ -1,0 +1,61 @@
+group 'com.darkknight.analytics.textsummary'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'maven'
+apply plugin: "java"
+apply plugin: 'idea'
+apply plugin: 'scala'
+apply plugin: 'application'
+
+sourceCompatibility = 1.7
+
+configurations {
+    provided
+    compile.extendsFrom provided
+}
+
+repositories {
+    mavenCentral()
+    flatDir {
+        dirs 'libs'
+    }
+}
+
+
+dependencies {
+    compile("org.scala-lang:scala-library:2.10.6")
+    compile("org.apache.opennlp:opennlp-tools:1.6.0")
+    //compile("org.apache.spark:spark-mllib_2.10:1.5.0")
+    //compile("org.apache.spark:spark-core_2.10:1.5.0")
+    compile group: 'com.opencsv', name: 'opencsv', version: '3.7'
+}
+
+sourceSets {
+    main {
+        scala {
+            srcDirs 'src/main/scala'
+        }
+        resources {
+            srcDirs 'src/main/resources'
+        }
+    }
+
+
+}
+
+sourceSets.main.java.srcDirs = []
+mainClassName = 'com.darkknight.analytics.textsummary.textmodel.Main'
+
+task fatJar(type: Jar, dependsOn: assemble) {
+    zip64 true
+    baseName = project.name
+    if(mainClassName) {
+        from { (configurations.runtime).collect { it.isDirectory() ? it : zipTree(it) } }
+        manifest { attributes 'Main-Class': mainClassName }
+        exclude 'META-INF/*.SF'
+        with jar
+    } else {
+        println "Error creating fatJar. Main class not specified!"
+        exit(1)
+    }
+}
